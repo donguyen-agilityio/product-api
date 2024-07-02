@@ -3,7 +3,7 @@ const router = express.Router();
 const store = require('store2');
 const { v4: uuidv4 } = require('uuid');
 
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
     try {
         const users = store('users') || [];
         const user = users.find(item => item.userName === req.body.userName);
@@ -26,10 +26,10 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:userName', (req, res) => {
     try {
         const users = store('users') || [];
-        const user = users.find(item => item.id === req.params.id);
+        const user = users.find(item => item.userName === req.params.userName);
 
         if (!user) {
             res.status(404).json({ message: 'User not found' });
