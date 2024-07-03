@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const store = require('store2');
 const { paginate } = require('../helpers/pagination');
-const { between, equal } = require('../helpers/filter');
+const { between, equal, arrEqual } = require('../helpers/filter');
 
 router.get('/:id', (req, res) => {
     try {
