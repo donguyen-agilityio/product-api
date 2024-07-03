@@ -25,7 +25,7 @@ const createProduct = () => {
             images[getRandomInt(images.length)],
             images[getRandomInt(images.length)]
         ],
-        colors: ['#ff0000', '#006CFF', '#171717'],
+        colors: ['ff0000', '006CFF', '171717'],
         description: casual.description,
         category: casual.country_code,
         size: ['S', 'M', 'L'],
