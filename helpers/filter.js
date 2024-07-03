@@ -6,12 +6,12 @@ const equal = (value1, value2) => {
     return value1 === value2;
 };
 
-const arrEqual = (value1, value2) => {
-    if (!value1) {
+const arrEqual = (value, arr) => {
+    if (!value) {
         return true;
     }
 
-    return value2.some(i => i === value2);
+    return arr.some(i => i === value);
 };
 
 const between = (min, value, max) => {
