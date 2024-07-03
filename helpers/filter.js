@@ -6,6 +6,14 @@ const equal = (value1, value2) => {
     return value1 === value2;
 };
 
+const arrEqual = (value1, value2) => {
+    if (!value1) {
+        return true;
+    }
+
+    return value2.some(i => i === value2);
+};
+
 const between = (min, value, max) => {
     if (!max) {
         return true;
@@ -14,4 +22,4 @@ const between = (min, value, max) => {
     return min <= value && value <= max;
 };
 
-module.exports = { equal, between };
+module.exports = { equal, arrEqual, between };

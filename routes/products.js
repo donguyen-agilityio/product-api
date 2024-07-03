@@ -35,7 +35,7 @@ router.get('/', (req, res) => {
             return (
                 between(minPrice, item.price, maxPrice) &&
                 equal(type, item.type) &&
-                equal(color, item.color)
+                arrEqual(color, item.colors)
             );
         });
         const paginatedProducts = paginate(
