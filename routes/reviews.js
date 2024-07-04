@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const store = require('store2');
+const { paginate } = require('../helpers/pagination');
 
 router.get('/:productId', (req, res) => {
     try {
