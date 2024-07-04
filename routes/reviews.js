@@ -43,32 +43,53 @@ router.get('/:productId', (req, res) => {
     }
 });
 
-router.post('/', (req, res) => {
-    const rating = req.body.rating;
-    const comment = req.body.comment;
-    const userName = req.body.userName;
-    const productId = req.body.productId;
-
-    const users = store('users') || [];
-    const reviews = store('reviews') || [];
-    const user = users.find(item => item.userName === userName);
-
-    if (!user) {
-        res.status(404).json({ message: 'User not found' });
+router.get('/settings', (req, res) => {
+    try {
+        res.status(200).json({
+            types: [
+                {
+                    name: '',
+                    count: 0
+                }
+            ],
+            colors: ['M', 'S', 'L'],
+            maxPrice: 1000
+        });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
     }
+});
 
-    const newReview = {
-        userId: user.id,
-        productId,
-        comment,
-        rating,
-        ratingDate: new Date().toISOString()
-    };
+router.post('/', (req, res) => {
+    try {
+        const rating = req.body.rating;
+        const comment = req.body.comment;
+        const userName = req.body.userName;
+        const productId = req.body.productId;
 
-    reviews.push(newReview);
-    store('reviews', reviews);
+        const users = store('users') || [];
+        const reviews = store('reviews') || [];
+        const user = users.find(item => item.userName === userName);
 
-    res.status(201).json(newReview);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+        }
+
+        const newReview = {
+            userId: user.id,
+            productId,
+            comment,
+            rating,
+            ratingDate: new Date().toISOString()
+        };
+
+        reviews.push(newReview);
+        store('reviews', reviews);
+
+        res.status(201).json(newReview);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 });
 
 module.exports = router;
