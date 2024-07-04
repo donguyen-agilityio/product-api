@@ -4,6 +4,23 @@ const store = require('store2');
 const { paginate } = require('../helpers/pagination');
 const { between, equal, arrEqual } = require('../helpers/filter');
 
+router.get('/settings', (req, res) => {
+    try {
+        res.status(200).json({
+            types: [
+                {
+                    name: '',
+                    count: 0
+                }
+            ],
+            colors: ['M', 'S', 'L'],
+            maxPrice: 1000
+        });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
 router.get('/:id', (req, res) => {
     try {
         const products = store('products') || [];

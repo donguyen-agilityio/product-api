@@ -43,23 +43,6 @@ router.get('/:productId', (req, res) => {
     }
 });
 
-router.get('/settings', (req, res) => {
-    try {
-        res.status(200).json({
-            types: [
-                {
-                    name: '',
-                    count: 0
-                }
-            ],
-            colors: ['M', 'S', 'L'],
-            maxPrice: 1000
-        });
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-});
-
 router.post('/', (req, res) => {
     try {
         const rating = req.body.rating;
