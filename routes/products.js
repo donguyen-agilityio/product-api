@@ -1,20 +1,33 @@
 const express = require('express');
 const router = express.Router();
 const store = require('store2');
-const { paginate } = require('../helpers/pagination');
-const { between, equal, arrEqual } = require('../helpers/filter');
+const {
+    max,
+    paginate,
+    covertArrayToSumObject,
+    covertArrayToCountObject,
+    buildProductsAverageRating,
+    filterProductsByQueryData
+} = require('../helpers');
 
 router.get('/settings', (req, res) => {
     try {
+        const products = store('products');
+        const types = Object.values(
+            covertArrayToCountObject({
+                data: products,
+                prop: 'type'
+            })
+        );
+        const maxPrice = max({
+            data: products,
+            prop: 'price'
+        });
+
         res.status(200).json({
-            types: [
-                {
-                    name: '',
-                    count: 0
-                }
-            ],
-            colors: ['M', 'S', 'L'],
-            maxPrice: 1000
+            types,
+            colors: ['ff0000', '006CFF', '171717'],
+            maxPrice
         });
     } catch (err) {
         res.status(400).json({ message: err.message });
@@ -23,16 +36,27 @@ router.get('/settings', (req, res) => {
 
 router.get('/:id', (req, res) => {
     try {
-        const products = store('products') || [];
+        const products = store('products');
         const product = products.find(
             item => item.id === req.params.id
         );
 
         if (!product) {
             res.status(404).json({ message: 'Product not found' });
+            return;
         }
 
-        res.status(200).json(product);
+        const reviews = store('reviews');
+        const productReviews = covertArrayToSumObject({
+            data: reviews,
+            prop: 'productId',
+            valueProp: 'rating'
+        });
+
+        const review = productReviews[product.id] || {};
+        const rating = Math.round(review.rating / review.count) || 0;
+
+        res.status(200).json({ ...product, rating });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -44,24 +68,38 @@ router.get('/', (req, res) => {
         const color = req.query.color || '';
         const minPrice = req.query.minPrice || 0;
         const maxPrice = req.query.maxPrice || 0;
-        const pageSize = req.query.pageSize || 4;
+        const pageSize = req.query.pageSize || 5;
         const pageNumber = req.query.pageNumber || 1;
+        const products = store('products');
 
-        const products = store('products') || [];
-        const filterProducts = products.filter(item => {
-            return (
-                between(minPrice, item.price, maxPrice) &&
-                equal(type, item.type) &&
-                arrEqual(color, item.colors)
-            );
+        const filterProducts = filterProductsByQueryData({
+            data: products,
+            type,
+            color,
+            minPrice,
+            maxPrice
         });
+
         const paginatedProducts = paginate(
             filterProducts,
             pageSize,
             pageNumber
         );
+
+        const reviews = store('reviews');
+        const productReviews = covertArrayToSumObject({
+            data: reviews,
+            prop: 'productId',
+            valueProp: 'rating'
+        });
+
+        const finalProducts = buildProductsAverageRating(
+            paginatedProducts,
+            productReviews
+        );
+
         res.status(200).json({
-            products: paginatedProducts,
+            products: finalProducts,
             count: filterProducts.length
         });
     } catch (err) {

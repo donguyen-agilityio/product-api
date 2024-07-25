@@ -1,9 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const casual = require('casual');
-const {
-    getRandomInt,
-    getRandomIntInclusive
-} = require('../helpers/random');
+const { getRandomInt, getRandomIntInclusive } = require('../helpers');
 
 const types = ['Nike', 'Adidas', 'Vans', 'All Stars', 'Airmax'];
 const images = [
@@ -15,6 +12,7 @@ const images = [
 
 const createProduct = () => {
     const type = types[getRandomInt(types.length)];
+
     return {
         id: uuidv4(),
         name: `Nike ${type} ${getRandomIntInclusive(0, 1000)}`,

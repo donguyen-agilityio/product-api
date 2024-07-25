@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const store = require('store2');
-const { paginate } = require('../helpers/pagination');
+const { paginate } = require('../helpers');
 
 router.get('/:productId', (req, res) => {
     try {
@@ -9,7 +9,7 @@ router.get('/:productId', (req, res) => {
         const pageNumber = req.query.pageNumber || 1;
         const productId = req.params.productId;
 
-        const reviews = store('reviews') || [];
+        const reviews = store('reviews');
         const filterReviews = reviews.filter(item => {
             return item.productId === productId;
         });
@@ -20,7 +20,7 @@ router.get('/:productId', (req, res) => {
         );
 
         const fullReviews = paginatedReviews.map(item => {
-            const users = store('users') || [];
+            const users = store('users');
             const user = users.find(i => i.id === item.userId);
 
             return {
@@ -50,12 +50,13 @@ router.post('/', (req, res) => {
         const userName = req.body.userName;
         const productId = req.body.productId;
 
-        const users = store('users') || [];
-        const reviews = store('reviews') || [];
+        const users = store('users');
+        const reviews = store('reviews');
         const user = users.find(item => item.userName === userName);
 
         if (!user) {
             res.status(404).json({ message: 'User not found' });
+            return;
         }
 
         const newReview = {
