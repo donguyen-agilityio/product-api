@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const app = express();
 const usersRouter = require('./routes/users');
@@ -11,8 +12,17 @@ create('users', mockUsers);
 create('reviews', []);
 create('products', mockProducts);
 
+const corsOptions = {
+    origin: '*',
+    credentials: true, //access-control-allow-credentials:true
+    optionSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
 app.use('/reviews', reviewsRouter);
+
 app.listen(3000, () => console.log('Server Started'));
