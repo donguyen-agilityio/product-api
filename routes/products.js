@@ -56,7 +56,11 @@ router.get('/:id', (req, res) => {
         const review = productReviews[product.id] || {};
         const rating = Math.round(review.rating / review.count) || 0;
 
-        res.status(200).json({ ...product, rating });
+        res.status(200).json({
+            ...product,
+            aveRating: rating,
+            reviewCount: review.count
+        });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }

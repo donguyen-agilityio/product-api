@@ -103,7 +103,8 @@ const buildProductsAverageRating = (data, array) => {
 
         return {
             ...item,
-            rating
+            aveRating: rating,
+            reviewCount: review.count
         };
     });
 };
