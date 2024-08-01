@@ -11,7 +11,7 @@ const createProduct = () => {
         id: uuidv4(),
         name: `Nike ${type} ${getRandomIntInclusive(0, 1000)}`,
         price: getRandomIntInclusive(5, 1000),
-        image: [
+        images: [
             'https://github.com/user-attachments/assets/fabd0a64-146d-4d8b-a4f1-ec2062cad620',
             'https://github.com/user-attachments/assets/2279bb8e-c59a-499f-8b79-e9410c13e22d',
             'https://github.com/user-attachments/assets/c95ffe96-1617-4e43-b2be-d00b031f742c',
@@ -20,7 +20,7 @@ const createProduct = () => {
         colors: ['ff0000', '006CFF', '171717'],
         description: casual.description,
         category: casual.country_code,
-        size: ['S', 'M', 'L'],
+        sizes: ['S', 'M', 'L'],
         type
     };
 };
