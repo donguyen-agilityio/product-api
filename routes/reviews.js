@@ -60,7 +60,10 @@ router.post('/', (req, res) => {
         }
 
         const newReview = {
-            userId: user.id,
+            user: {
+                name: user.name,
+                avatar: user.avatar
+            },
             productId,
             comment,
             rating,
