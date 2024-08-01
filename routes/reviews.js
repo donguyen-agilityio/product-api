@@ -10,6 +10,14 @@ router.get('/:productId', (req, res) => {
         const pageNumber = req.query.pageNumber || 1;
         const productId = req.params.productId;
 
+        const products = store('products');
+        const product = products.find(item => item.id === productId);
+
+        if (!product) {
+            res.status(404).json({ message: 'Product not found' });
+            return;
+        }
+
         const reviews = store('reviews');
         const filterReviews = reviews
             .filter(item => {
