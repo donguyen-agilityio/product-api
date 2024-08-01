@@ -10,16 +10,20 @@ router.get('/:productId', (req, res) => {
         const productId = req.params.productId;
 
         const reviews = store('reviews');
-        const filterReviews = reviews.filter(item => {
-            return item.productId === productId;
-        });
-        const paginatedReviews = paginate(
-            filterReviews,
-            pageSize,
-            pageNumber
-        );
+        const filterReviews = reviews
+            .filter(item => {
+                return item.productId === productId;
+            })
+            .sort(
+                (a, b) => new Date(b.ratingDate) - new Date(a.ratingDate)
+            );
+        // const paginatedReviews = paginate(
+        //     filterReviews,
+        //     pageSize,
+        //     pageNumber
+        // );
 
-        const fullReviews = paginatedReviews.map(item => {
+        const fullReviews = filterReviews.map(item => {
             const users = store('users');
             const user = users.find(i => i.id === item.userId);
 
