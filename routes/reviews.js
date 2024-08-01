@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const store = require('store2');
+const { v4: uuidv4 } = require('uuid');
 const { paginate } = require('../helpers');
 
 router.get('/:productId', (req, res) => {
@@ -64,6 +65,7 @@ router.post('/', (req, res) => {
         }
 
         const newReview = {
+            id: uuidv4(),
             userId: user.id,
             productId,
             comment,
@@ -75,6 +77,7 @@ router.post('/', (req, res) => {
         store('reviews', reviews);
 
         res.status(201).json({
+            id: newReview.id,
             user: {
                 name: user.name,
                 avatar: user.avatar
