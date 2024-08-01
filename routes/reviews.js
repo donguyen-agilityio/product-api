@@ -103,7 +103,7 @@ router.get('/one/:id', (req, res) => {
     }
 });
 
-router.get('/all', (req, res) => {
+router.get('/all/v1', (req, res) => {
     try {
         const reviews = store('reviews') || [];
 
