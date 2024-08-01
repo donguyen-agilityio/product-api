@@ -85,4 +85,22 @@ router.post('/', (req, res) => {
     }
 });
 
+router.get('/:id', (req, res) => {
+    try {
+        const reviews = store('reviews') || [];
+        const review = reviews.find(
+            item => item.id === req.params.id
+        );
+
+        if (!review) {
+            res.status(404).json({ message: 'Review not found' });
+            return;
+        }
+
+        res.status(200).json(review);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
 module.exports = router;
