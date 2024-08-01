@@ -60,10 +60,7 @@ router.post('/', (req, res) => {
         }
 
         const newReview = {
-            user: {
-                name: user.name,
-                avatar: user.avatar
-            },
+            userId: user.id,
             productId,
             comment,
             rating,
@@ -73,7 +70,16 @@ router.post('/', (req, res) => {
         reviews.push(newReview);
         store('reviews', reviews);
 
-        res.status(201).json(newReview);
+        res.status(201).json({
+            user: {
+                name: user.name,
+                avatar: user.avatar
+            },
+            productId: newReview.productId,
+            comment: newReview.comment,
+            rating: newReview.rating,
+            ratingDate: newReview.ratingDate
+        });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
