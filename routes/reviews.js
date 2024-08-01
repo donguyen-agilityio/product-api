@@ -103,4 +103,14 @@ router.get('/one/:id', (req, res) => {
     }
 });
 
+router.get('/all', (req, res) => {
+    try {
+        const reviews = store('reviews') || [];
+
+        res.status(200).json(reviews);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
 module.exports = router;
