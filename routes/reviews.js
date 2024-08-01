@@ -85,7 +85,7 @@ router.post('/', (req, res) => {
     }
 });
 
-router.get('/one/:id', (req, res) => {
+router.get('/one/v1/:id', (req, res) => {
     try {
         const reviews = store('reviews') || [];
         const review = reviews.find(
