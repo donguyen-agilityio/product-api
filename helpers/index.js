@@ -98,7 +98,10 @@ const covertArrayToObject = ({ data, prop }) => {
 
 const buildProductsAverageRating = (data, array) => {
     return data.map(item => {
-        const review = array[item.id] || {};
+        const review = array[item.id] || {
+            rating: 0,
+            count: 0
+        };
         const rating = Math.round(review.rating / review.count) || 0;
 
         return {

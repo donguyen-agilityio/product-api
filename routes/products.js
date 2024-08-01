@@ -53,7 +53,10 @@ router.get('/:id', (req, res) => {
             valueProp: 'rating'
         });
 
-        const review = productReviews[product.id] || {};
+        const review = productReviews[product.id] || {
+            rating: 0,
+            count: 0
+        };
         const rating = Math.round(review.rating / review.count) || 0;
 
         res.status(200).json({
