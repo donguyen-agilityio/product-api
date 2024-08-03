@@ -1,34 +1,23 @@
 const mongoose = require('mongoose');
 const Product = require('../models/product');
 
-function createProduct({
-  name,
-  type,
-  description,
-  category,
-  price,
-  images,
-  colors,
-  sizes
-}) {
+function createProduct({ category, colors, description, images, name, price, sizes, type }) {
   return Product.create({
-    name,
-    type,
-    description,
     category,
-    price,
-    images,
     colors,
-    sizes
+    description,
+    images,
+    name,
+    price,
+    sizes,
+    type
   });
 }
 
 function getProductById(productId) {
   return Product.aggregate([
     {
-      $match: {
-        _id: mongoose.Types.ObjectId(productId)
-      }
+      $match: { _id: mongoose.Types.ObjectId.createFromHexString(productId) }
     },
     {
       $lookup: {
@@ -40,17 +29,8 @@ function getProductById(productId) {
     },
     {
       $addFields: {
-        reviewsCount: {
-          $size: '$reviews'
-        },
-        averageRating: {
-          $ifNull: [
-            {
-              $avg: '$reviews.rating'
-            },
-            0
-          ]
-        }
+        reviewsCount: { $size: '$reviews' },
+        averageRating: { $ifNull: [{ $avg: '$reviews.rating' }, 0] }
       }
     },
     {
@@ -63,6 +43,7 @@ function getProductById(productId) {
         sizes: 1,
         colors: 1,
         images: 1,
+        createdAt: 1,
         reviewsCount: 1,
         averageRating: 1
       }
@@ -70,13 +51,7 @@ function getProductById(productId) {
   ]);
 }
 
-function getProducts({
-  type,
-  minPrice = 0,
-  maxPrice = 0,
-  page = 1,
-  limit = 5
-}) {
+function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, type }) {
   const matchStage = {};
 
   if (type) {
@@ -106,9 +81,7 @@ function getProducts({
           {
             $addFields: {
               reviewsCount: { $size: '$reviews' },
-              averageRating: {
-                $ifNull: [{ $avg: '$reviews.rating' }, 0]
-              }
+              averageRating: { $ifNull: [{ $avg: '$reviews.rating' }, 0] }
             }
           },
           {
@@ -121,20 +94,51 @@ function getProducts({
               sizes: 1,
               colors: 1,
               images: 1,
+              createdAt: 1,
               reviewsCount: 1,
               averageRating: 1
             }
           },
-          {
-            $skip: (page - 1) * limit
-          },
-          {
-            $limit: limit
-          }
+          { $skip: (page - 1) * limit },
+          { $limit: limit }
         ]
       }
     }
   ]);
 }
 
-module.exports = { createProduct, getProductById, getProducts };
+function getProductsSettings() {
+  return Product.aggregate([
+    {
+      $facet: {
+        colors: [
+          { $unwind: '$colors' },
+          { $group: { _id: null, colors: { $addToSet: '$colors' } } },
+          { $project: { _id: 0, colors: 1 } }
+        ],
+        types: [
+          { $group: { _id: '$type', count: { $sum: 1 } } },
+          { $project: { _id: 0, type: '$_id', count: 1 } }
+        ],
+        maxPrice: [
+          { $group: { _id: null, maxPrice: { $max: '$price' } } },
+          { $project: { _id: 0, maxPrice: 1 } }
+        ]
+      }
+    },
+    {
+      $project: {
+        types: '$types',
+        colors: { $ifNull: [{ $arrayElemAt: ['$colors.colors', 0] }, []] },
+        maxPrice: { $ifNull: [{ $arrayElemAt: ['$maxPrice.maxPrice', 0] }, 0] }
+      }
+    }
+  ]);
+}
+
+module.exports = {
+  createProduct,
+  getProductById,
+  getProducts,
+  getProductsSettings
+};

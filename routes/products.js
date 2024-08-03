@@ -2,23 +2,27 @@ const express = require('express');
 const {
   createProduct,
   getProductById,
-  getProducts
+  getProducts,
+  getProductsSettings
 } = require('../services/products');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    const result = await getProducts(req.query);
+    const product = await createProduct(req.body);
 
-    const products = result[0].products;
-    const totalCount = result[0].totalCount[0] || { count: 0 };
-    const count = totalCount.count;
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
 
-    res.status(200).json({
-      products,
-      count: count
-    });
+router.get('/settings', async (req, res) => {
+  try {
+    const result = await getProductsSettings();
+
+    res.status(200).json(result[0]);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -34,11 +38,18 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const product = await createProduct(req.body);
+    const result = await getProducts(req.query);
 
-    res.status(201).json(product);
+    const products = result[0].products;
+    const totalCount = result[0].totalCount[0] || { count: 0 };
+    const count = totalCount.count;
+
+    res.status(200).json({
+      products,
+      count: count
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

@@ -13,7 +13,7 @@ function createReview({ rating = 5, comment, userId, productId }) {
 function getReviewsByProductId(productId) {
   return Review.aggregate([
     {
-      $match: { product: new mongoose.Types.ObjectId(productId) }
+      $match: { product: mongoose.Types.ObjectId.createFromHexString(productId) }
     },
     {
       $facet: {
@@ -45,7 +45,11 @@ function getReviewsByProductId(productId) {
             $project: {
               rating: 1,
               comment: 1,
-              user: { name: 1, avatar: 1 },
+              createdAt: 1,
+              user: {
+                name: 1,
+                avatar: 1
+              },
               productId: '$product._id'
             }
           }
