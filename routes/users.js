@@ -1,23 +1,26 @@
 const express = require('express');
+const { createUser, getUsers } = require('../services/users');
+
 const router = express.Router();
-const store = require('store2');
 
-router.get('/:userName', (req, res) => {
-    try {
-        const users = store('users') || [];
-        const user = users.find(
-            item => item.userName === req.params.userName
-        );
+router.post('/', async (req, res) => {
+  try {
+    const user = await createUser(req.body);
 
-        if (!user) {
-            res.status(404).json({ message: 'User not found' });
-            return;
-        }
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
 
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
+router.get('/', async (req, res) => {
+  try {
+    const users = await getUsers(req.query);
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 module.exports = router;
