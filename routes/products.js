@@ -10,7 +10,8 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const product = await createProduct(req.body);
+    const createdProduct = await createProduct(req.body);
+    const product = await getProductById(createdProduct.id);
 
     res.status(201).json(product);
   } catch (error) {
@@ -20,9 +21,9 @@ router.post('/', async (req, res) => {
 
 router.get('/settings', async (req, res) => {
   try {
-    const result = await getProductsSettings();
+    const settings = await getProductsSettings();
 
-    res.status(200).json(result[0]);
+    res.status(200).json(settings);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -40,16 +41,9 @@ router.get('/:id', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const result = await getProducts(req.query);
+    const data = await getProducts(req.query);
 
-    const products = result[0].products;
-    const totalCount = result[0].totalCount[0] || { count: 0 };
-    const count = totalCount.count;
-
-    res.status(200).json({
-      products,
-      count: count
-    });
+    res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

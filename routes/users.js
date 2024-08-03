@@ -1,11 +1,12 @@
 const express = require('express');
-const { createUser, getUsers } = require('../services/users');
+const { createUser, getUserById, getUsers } = require('../services/users');
 
 const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const user = await createUser(req.body);
+    const createdUser = await createUser(req.body);
+    const user = await getUserById(createdUser.id);
 
     res.status(201).json(user);
   } catch (error) {

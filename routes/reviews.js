@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { createReview, getReviewsByProductId } = require('../services/reviews');
+const { createReview, getReviewById, getReviewsByProductId } = require('../services/reviews');
 
 router.post('/', async (req, res) => {
   try {
-    const review = await createReview(req.body);
+    const createdReview = await createReview(req.body);
+    const review = await getReviewById(createdReview.id);
 
     res.status(201).json(review);
   } catch (error) {
@@ -14,16 +15,9 @@ router.post('/', async (req, res) => {
 
 router.get('/:productId', async (req, res) => {
   try {
-    const result = await getReviewsByProductId(req.params.productId);
+    const data = await getReviewsByProductId(req.params.productId);
 
-    const reviews = result[0].reviews;
-    const totalCount = result[0].totalCount[0] || { count: 0 };
-    const count = totalCount.count;
-
-    res.status(200).json({
-      reviews,
-      count: count
-    });
+    res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

@@ -14,8 +14,8 @@ function createProduct({ category, colors, description, images, name, price, siz
   });
 }
 
-function getProductById(productId) {
-  return Product.aggregate([
+async function getProductById(productId) {
+  const result = await Product.aggregate([
     {
       $match: { _id: mongoose.Types.ObjectId.createFromHexString(productId) }
     },
@@ -35,6 +35,8 @@ function getProductById(productId) {
     },
     {
       $project: {
+        _id: 0,
+        id: '$_id',
         name: 1,
         type: 1,
         price: 1,
@@ -49,9 +51,11 @@ function getProductById(productId) {
       }
     }
   ]);
+
+  return result[0];
 }
 
-function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, type }) {
+async function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, type }) {
   const matchStage = {};
 
   if (type) {
@@ -62,7 +66,7 @@ function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, type }) 
     matchStage.price = { $gte: minPrice, $lte: maxPrice };
   }
 
-  return Product.aggregate([
+  const result = await Product.aggregate([
     {
       $match: matchStage
     },
@@ -86,6 +90,8 @@ function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, type }) 
           },
           {
             $project: {
+              _id: 0,
+              id: '$_id',
               name: 1,
               type: 1,
               price: 1,
@@ -105,10 +111,19 @@ function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, type }) 
       }
     }
   ]);
+
+  const products = result[0].products;
+  const totalCount = result[0].totalCount[0] || { count: 0 };
+  const count = totalCount.count;
+
+  return {
+    products,
+    count
+  };
 }
 
-function getProductsSettings() {
-  return Product.aggregate([
+async function getProductsSettings() {
+  const result = await Product.aggregate([
     {
       $facet: {
         colors: [
@@ -134,6 +149,8 @@ function getProductsSettings() {
       }
     }
   ]);
+
+  return result[0];
 }
 
 module.exports = {
