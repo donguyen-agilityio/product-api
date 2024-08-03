@@ -1,26 +1,29 @@
+require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
-const app = express();
+const mongoose = require('mongoose');
+
 const usersRouter = require('./routes/users');
-const reviewsRouter = require('./routes/reviews');
 const productsRouter = require('./routes/products');
-const mockUsers = require('./mocks/users');
-const mockProducts = require('./mocks/products');
-const { create } = require('./helpers');
+const reviewsRouter = require('./routes/reviews');
 
-create('users', mockUsers);
-create('reviews', []);
-create('products', mockProducts);
+mongoose.connect(process.env.DATABASE_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+mongoose.connection.on('error', error => console.error(error));
+mongoose.connection.once('open', () => console.log('Connected to Database'));
 
-const corsOptions = {
-    origin: '*',
-    credentials: true, //access-control-allow-credentials:true
-    optionSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
-
+const app = express();
 app.use(express.json());
+app.use(
+  cors({
+    origin: '*',
+    credentials: true,
+    optionSuccessStatus: 200
+  })
+);
+
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
 app.use('/reviews', reviewsRouter);

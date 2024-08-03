@@ -6,11 +6,11 @@
     "experimentalTernaries": true,
     "jsxBracketSameLine": false,
     "jsxSingleQuote": false,
-    "printWidth": 70,
+    "printWidth": 100,
     "semi": true,
     "singleAttributePerLine": true,
     "singleQuote": true,
-    "tabWidth": 4,
+    "tabWidth": 2,
     "trailingComma": "none",
     "useTabs": false
 }
