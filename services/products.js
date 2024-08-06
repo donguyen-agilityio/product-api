@@ -55,11 +55,15 @@ async function getProductById(productId) {
   return result[0];
 }
 
-async function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, type }) {
+async function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, type, color }) {
   const matchStage = {};
 
   if (type) {
     matchStage.type = type;
+  }
+
+  if (color) {
+    matchStage.colors = color;
   }
 
   if (maxPrice) {
