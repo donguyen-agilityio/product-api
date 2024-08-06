@@ -5,6 +5,7 @@ const {
   getProducts,
   getProductsSettings
 } = require('../services/products');
+const { banner } = require('../mocks/settings');
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.get('/settings', async (req, res) => {
   try {
     const settings = await getProductsSettings();
 
-    res.status(200).json(settings);
+    res.status(200).json({ ...settings, banner });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
