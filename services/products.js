@@ -56,6 +56,7 @@ async function getProductById(productId) {
 }
 
 async function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, type, color }) {
+  const limitNumber = parseInt(limit);
   const matchStage = {};
 
   if (type) {
@@ -67,7 +68,10 @@ async function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, ty
   }
 
   if (maxPrice) {
-    matchStage.price = { $gte: minPrice, $lte: maxPrice };
+    const minPriceNumber = parseInt(minPrice);
+    const maxPriceNumber = parseInt(maxPrice);
+    
+    matchStage.price = { $gte: minPriceNumber, $lte: maxPriceNumber };
   }
 
   const result = await Product.aggregate([
@@ -109,8 +113,8 @@ async function getProducts({ limit = 5, maxPrice = 0, minPrice = 0, page = 1, ty
               averageRating: 1
             }
           },
-          { $skip: (page - 1) * limit },
-          { $limit: limit }
+          { $skip: (page - 1) * limitNumber },
+          { $limit: limitNumber }
         ]
       }
     }
